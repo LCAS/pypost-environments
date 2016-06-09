@@ -7,7 +7,7 @@ import abc
 class TransitionFunction(DataManipulator):
 
     def __init__(self, rootSampler, dimState, dimAction):
-        super(TransitionFunction, self).__init__(rootSampler.dataManager)
+        DataManipulator.__init__(self, rootSampler.dataManager)
         self.dimState = dimState
         self.dimAction = dimAction
 
@@ -41,16 +41,17 @@ class TransitionFunction(DataManipulator):
 
 
     def projectStateInPeriod(self, state):
-        # todo implement
-        return
+        # todo implement, no periodicity feature in data manager
+        raise RuntimeError('Not yet Implemented')
 
-    def initObjects(self):
+
+    def initObject(self):
         self.dimState = self.stepManager.getNumDimensions('states')
         self.dimAction = self.stepManager.getNumDimensions('actions')
 
         self.minRangeState = self.stepManager.getMinRange('states')
         self.maxRangeState = self.stepManager.getMaxRange('states')
 
-        self.minRangeState = self.stepManager.getMinRange('actions')
-        self.minRangeState = self.stepManager.getMaxRange('actions')
+        self.minRangeAction = self.stepManager.getMinRange('actions')
+        self.maxRangeAction = self.stepManager.getMaxRange('actions')
 

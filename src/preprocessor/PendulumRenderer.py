@@ -1,16 +1,15 @@
-from src.SimplePendulum import Pendulum
 import numpy as np
 import matplotlib.pyplot as plt
 from PIL import Image
 from PIL import ImageDraw
-
+from src.preprocessor.Preprocessor import Preprocessor
 
 # create image that is twice as large desired image, scales down for aliasing
-# Todo create 'preprocessor' interface and connection to toolbox
-class PendulumImageGenerator:
+class PendulumImageGenerator(Preprocessor):
 
-    def __init__(self, img_size, line_width=-1):
+    def __init__(self, img_size, line_width=-1, encoding='F'):
 
+        self.encoding = encoding
         self.scale = 2
         self.img_size_actual = img_size
         self.img_size_internal = self.img_size_actual * self.scale
@@ -22,8 +21,7 @@ class PendulumImageGenerator:
             self.line_width = line_width
 
     def _generateLine(self, x1, y1):
-        #'F' is float gray scale (between 0 and 1) , Todo: make setable
-        img = Image.new('F', (self.img_size_internal, self.img_size_internal), 0)
+        img = Image.new(self.encoding, (self.img_size_internal, self.img_size_internal), 0)
         draw = ImageDraw.Draw(img)
         draw.line([(self.x0, self.y0), (x1, y1)], fill=1.0, width=self.line_width, )
         img = img.resize((self.img_size_internal // self.scale, self.img_size_internal // self.scale), resample=Image.ANTIALIAS)
@@ -42,3 +40,7 @@ class PendulumImageGenerator:
         reshaped_img = np.reshape(img, (self.img_size_actual, self.img_size_actual))
         plt.imshow(reshaped_img, cmap='gray')
 
+    #todo implement
+    def preprocessData(self, data, flat=False):
+        raise RuntimeError('not yet implemented')
+        #return data
