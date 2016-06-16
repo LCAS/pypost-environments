@@ -1,4 +1,5 @@
 __all__ = ['ContinuousTimeDynamicalSystem',
            'DoubleLink',
-           'DynamicalSystem'
+           'DynamicalSystem',
+           'ForwardSimWrapper',
            'Pendulum']

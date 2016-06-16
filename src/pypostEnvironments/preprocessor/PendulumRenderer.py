@@ -1,8 +1,12 @@
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from PIL import Image
 from PIL import ImageDraw
-from src.preprocessor.Preprocessor import Preprocessor
+from pypost.data.Data import Data
+from pypost.data.DataManager import DataManager
+from pypostEnvironments.preprocessor.Preprocessor import Preprocessor
+
+
 
 # create image that is twice as large desired image, scales down for aliasing
 class PendulumImageGenerator(Preprocessor):
@@ -42,5 +46,25 @@ class PendulumImageGenerator(Preprocessor):
 
     #todo implement
     def preprocessData(self, data, flat=False):
-        raise RuntimeError('not yet implemented')
-        #return data
+        if not isinstance(data, Data):
+            raise TypeError('argument data needs to be of type pypost.data.Data not ' + str(type(data)))
+
+        states = data.getDataEntry('states')
+
+        numElements = data.getNumElements('states')
+
+        imgManager = DataManager('images')
+        imgManager.addDataEntry('rawImages', self.img_size_actual ** 2)
+
+        img_data = imgManager.getDataObject(numElements)
+
+
+        images = np.zeros((len(states), self.img_size_actual ** 2))
+        for i, state in enumerate(states):
+            img_data.setDataEntry('rawImages', i, self.generateFlattenedImageFromState(state))
+
+        print('bla')
+
+
+
+        return data

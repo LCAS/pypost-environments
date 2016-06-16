@@ -1,6 +1,9 @@
-from src.dynamicalSystem.DynamicalSystem import DynamicalSystem
 import abc
+
 import numpy as np
+from src.pypostEnvironments.dynamicalSystem.DynamicalSystem import DynamicalSystem
+
+
 class ContinuousTimeDynamicalSystem(DynamicalSystem):
 
     def __init__(self, rootSampler, dimensions):

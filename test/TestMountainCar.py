@@ -1,6 +1,7 @@
 from pypost.sampler.EpisodeWithStepsSampler import  EpisodeWithStepsSampler
 from pypost.sampler.isActiveSampler.IsActiveNumSteps import IsActiveNumSteps
-from src.MountainCar import MountainCar
+
+from pypostEnvironments.MountainCar import MountainCar
 
 sampler = EpisodeWithStepsSampler()
 dataManager = sampler.getEpisodeDataManager()

@@ -1,5 +1,7 @@
-from src.TransitionFunction import TransitionFunction
 import abc
+
+from pypostEnvironments.TransitionFunction import TransitionFunction
+
 
 class TransitionFunctionGaussianNoise(TransitionFunction):
 

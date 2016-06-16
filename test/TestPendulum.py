@@ -1,10 +1,10 @@
-from pypost.sampler.isActiveSampler.IsActiveNumSteps import IsActiveNumSteps
-from pypost.sampler.EpisodeWithStepsSampler import  EpisodeWithStepsSampler
-from pypost.sampler.initialSampler.InitialStateSamplerStandard import InitialStateSamplerStandard
-from src.dynamicalSystem.Pendulum import Pendulum
 import numpy as np
-from pypost.common.Settings import Settings
 import pypost.common.SettingsManager as SettingsManager
+from pypost.sampler.EpisodeWithStepsSampler import EpisodeWithStepsSampler
+from pypost.sampler.initialSampler.InitialStateSamplerStandard import InitialStateSamplerStandard
+from pypost.sampler.isActiveSampler.IsActiveNumSteps import IsActiveNumSteps
+
+from pypostEnvironments.dynamicalSystem.Pendulum import Pendulum
 
 defaultSettings = SettingsManager.getDefaultSettings()
 defaultSettings.setProperty('noiseStd', 1.0)
@@ -39,5 +39,9 @@ data = dataManager.getDataObject(10)
 sampler.numSamples = 100
 sampler.setParallelSampling(True)
 sampler.createSamples(data)
-print('done')
+print('done - generating')
+#
+#pendulum_img_gen = PendulumRenderer.PendulumImageGenerator(48)
+#pendulum_img_gen.preprocessData(data, flat=True)
+
 

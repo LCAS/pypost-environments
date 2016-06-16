@@ -1,5 +1,5 @@
 import numpy as np
-from src.TransitionFunction import TransitionFunction
+from pypostEnvironments.TransitionFunction import TransitionFunction
 
 # basically the same implementation as in matlab
 class MountainCar(TransitionFunction):

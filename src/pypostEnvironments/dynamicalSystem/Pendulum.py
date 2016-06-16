@@ -1,6 +1,6 @@
-from src.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
-from src.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
 import numpy as np
+from pypostEnvironments.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
+from pypostEnvironments.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
 
 class Pendulum(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
 
