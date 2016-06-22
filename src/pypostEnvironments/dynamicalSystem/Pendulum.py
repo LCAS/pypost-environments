@@ -67,4 +67,4 @@ class Pendulum(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         return np.zeros((numElem, 1))
 
     def sampleAction(self, numElem):
-        return np.random.uniform(- self.maxTorque, self.maxTorque, [numElem, self.dimAction])
+        return np.zeros([numElem, self.dimAction])

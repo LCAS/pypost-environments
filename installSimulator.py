@@ -9,3 +9,11 @@ setup(name='doublePendulumForwardModel',
       version='1.0',
       description='test',
       ext_modules=[doublePendulumForwardModel])
+
+quadPendulumForwardModel = Extension('quadPendulumForwardModel',
+                                     sources=['src/pypostEnvironments/dynamicalSystem/QuadPendulumForwardModel.c'])
+
+setup(name='quadPendulumForwardModel',
+      version='1.0',
+      description='test',
+      ext_modules=[quadPendulumForwardModel])

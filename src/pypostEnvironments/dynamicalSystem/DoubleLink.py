@@ -44,7 +44,7 @@ class DoubleLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         action = np.maximum(minRange, np.minimum(actions, maxRange))
 
         for i in range(0, np.shape(states)[0]):
-            #Todo try to reuse c forward model or re implement directly in python
+
             x_temp = Simulator.simulate_double_pendulum(states[i,:], action[i,:], self.lengths, self.masses,
                                                         self.inertias, self.g, self.friction, self.dt, self.sim_dt)
             ffwdTorque[i, :] = x_temp[4:]
