@@ -6,29 +6,32 @@ from pypost.data.DataManipulator import DataManipulator
 
 class PlanarKinematicsImagePreprocessor(Preprocessor, DataManipulator):
 
-    def __init__(self, dataManager):
+    def __init__(self, dataManager, nrJoints):
 
         Preprocessor.__init__(self)
         DataManipulator.__init__(self, dataManager)
 
-        self.img_size = 48
-        self.nr_joints = 1
-        self.line_width = 5
-        self.encoding = 'F'
+        self.nrJoints = nrJoints
 
-        self.renderer = Renderer(self.img_size, self.nr_joints, self.line_width, self.encoding)
-        self.dataManager.addDataEntry('f_images', self.img_size**2)
-        self.addDataManipulationFunction(self.renderer.generateFlattenedImagesFromState,
+        self.imgSize = 48
+        self.nrJoints = 1
+        self.lineWidth = 5
+        self.encoding = 'F' # Floating point gray scale encoding (between 0 and 1). use 'L' for 8 bit int
+
+        self.linkProperty('imgSize')
+        self.linkProperty('lineWidth')
+
+        self.renderer = Renderer(self.imgSize, self.nrJoints, self.lineWidth, self.encoding)
+        self.dataManager.addDataEntry('f_images', self.imgSize ** 2)
+        self.addDataManipulationFunction(self.renderer.generateFlattenedImagesFromStates,
                                          ['states'], ['f_images'], name='createImages')
 
     def preprocessData(self, data, *args):
         self.callDataFunction('createImages', data)
 
 
-
-# create image that is twice as large desired image, scales down for aliasing
-class Renderer():
-
+class Renderer:
+    # create image that is twice as large as desired image, scales down for aliasing
     def __init__(self, img_size, nr_joints, line_width=-1, encoding='F'):
 
         self.encoding = encoding
@@ -37,7 +40,7 @@ class Renderer():
         self.img_size_actual = img_size
         self.img_size_internal = self.img_size_actual * self.scale
         self.x0 = self.y0 = self.img_size_internal / 2
-        self.length = self.img_size_internal / 2 #- self.img_size_internal / 10
+        self.length = self.img_size_internal / 2
         self.length = self.length // nr_joints
         if line_width == -1:
             self.line_width = self.img_size_internal // 15
@@ -53,6 +56,7 @@ class Renderer():
                       fill=1.0, width=self.line_width)
         img = img.resize((self.img_size_internal // self.scale, self.img_size_internal // self.scale), resample=Image.ANTIALIAS)
         img_as_array = np.asarray(img)
+        # somehow values outside the interval [0,1] are created. Currently just clipped. Map into interval instead?
         if self.encoding == 'F':
             img_as_array = np.clip(img_as_array, 0, 1)
         return img_as_array
@@ -73,8 +77,11 @@ class Renderer():
         points = self._generatePointsFromAngles(angles)
         return self._generateLines(points)
 
-    def generateFlattenedImagesFromState(self, states):
-        images = np.zeros((len(states), self.img_size_actual**2))
+    def generateImagesFromStates(self, states):
+        images = np.zeros((len(states), self.img_size_actual, self.img_size_actual))
         for i, state in enumerate(states):
-            images[i] = np.reshape(self.generateImageFromState(state), (self.img_size_actual ** 2))
+            images[i] = self.generateImageFromState(state)
         return images
+
+    def generateFlattenedImagesFromStates(self, states):
+        return np.reshape(self.generateImagesFromStates(states), (len(states), -1))

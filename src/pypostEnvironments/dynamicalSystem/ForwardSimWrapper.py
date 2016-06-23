@@ -2,6 +2,9 @@ import doublePendulumForwardModel
 import quadPendulumForwardModel
 import numpy as np
 
+# Wraps the forward models written in c. Since handling of numpy arrays in c is bit tricky and they are of fixed size
+# anyway we 'unpack' them here.
+
 def simulate_double_pendulum(states, actions, lengths, masses, inertias, g, friction, dt, dst,
                              use_pd=0, pdSetPoints=np.zeros((4)), pdGain=np.zeros((4))):
     return doublePendulumForwardModel.simulate(states[0], states[1], states[2], states[3],

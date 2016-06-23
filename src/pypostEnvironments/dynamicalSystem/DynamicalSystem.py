@@ -56,6 +56,7 @@ class DynamicalSystem(TransitionFunctionGaussianNoise):
         new_states = self.getExpectedNextState(states, actions + actionNoise, args)
         return new_states, actionNoise
 
+    # Todo Test this
     def getLinearizedDynamics(self, states, actions, *args):
         f_states = np.zeros(self.dimState, self.dimState)
         f_actions = np.zeros(self.dimState, self.dimAction)
@@ -79,7 +80,7 @@ class DynamicalSystem(TransitionFunctionGaussianNoise):
             actions_temp[i] = u_dummy[i] + stepSize
             f1 = self.getExpectedNextState(states, actions_temp, args)
             actions_temp[i] = u_dummy[i] - stepSize
-            f2= self.getExpectedNextState(states, actions_temp, args)
+            f2 = self.getExpectedNextState(states, actions_temp, args)
             f_actions[:, i] = (f1 - f2) / (2 * stepSize)
 
         f = np.transpose(f) - f_states * np.transpose(states) + f_actions * np.transpose(actions)

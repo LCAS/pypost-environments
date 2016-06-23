@@ -33,13 +33,8 @@ class Pendulum(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         self.dataManager.setRange('actions', - self.actionMaxRange, self.actionMaxRange)
 
         self.initObject()
-        #Dummy
-        self.addDataManipulationFunction(self.sampleAction, [], ['actions'])
-        self.stepManager.addDataEntry('rewards', 1, -1, 1)
-        self.addDataManipulationFunction(self.sampleReward, [], ['rewards'])
-        self.addDataFunctionAlias('sampleReturn', 'sampleReward')
 
-
+        #Dummy for testing, as long as no further policies and reward functions are implemented
 
     def getExpectedNextStateContTime(self, dt, states, actions, *args):
 
@@ -47,24 +42,14 @@ class Pendulum(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         nSteps = dt / self.sim_dt
 
         if nSteps != np.round(nSteps):
-            # Todo make nice warning
             print('Warning from Pendulum: dt does not match up')
             nSteps = np.round(nSteps)
 
         c = self.g * self.lengths * self.masses / self.inertias
         for i in range(0, int(nSteps)):
-            bla2 = states[:, 1:2] * self.friction
-            bla3 = actions / self.inertias
-            bla4 = c * np.sin(states[:, 0:1])
-            bla1 = self.sim_dt * (bla4 + bla3 - bla2 )
-            velNew = states[:, 1:2] + bla1
+            velNew = states[:, 1:2] + self.sim_dt * (c * np.sin(states[:, 0:1])
+                                                     + actions / self.inertias
+                                                     - states[:, 1:2] * self.friction )
             states = np.concatenate((states[:, 0:1] + self.sim_dt * velNew, velNew), axis=1)
         return states
 
-    # Below here are just dummy functions for testing
-
-    def sampleReward(self, numElem):
-        return np.zeros((numElem, 1))
-
-    def sampleAction(self, numElem):
-        return np.zeros([numElem, self.dimAction])

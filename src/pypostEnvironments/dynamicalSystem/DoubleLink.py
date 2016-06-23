@@ -26,35 +26,23 @@ class DoubleLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         self.PDGains = 0
         self.initObject()
 
-        #Dummy
-        self.addDataManipulationFunction(self.sampleAction, [], ['actions'])
-        self.stepManager.addDataEntry('rewards', 1, -1, 1)
-        self.addDataManipulationFunction(self.sampleReward, [], ['rewards'])
-        self.addDataFunctionAlias('sampleReturn', 'sampleReward')
-        self.maxTorque = 30
-
     def getExpectedNextStateContTime(self, dt, states, actions, *args):
 
         nextState = np.zeros(np.shape(states))
-        ffwdTorque = np.zeros((np.shape(states)[0], 2))
+        ffwdTorque = np.zeros((len(states), 2))
 
-        # clip actions
         minRange = self.dataManager.getMinRange('actions')
         maxRange = self.dataManager.getMaxRange('actions')
         action = np.maximum(minRange, np.minimum(actions, maxRange))
 
-        for i in range(0, np.shape(states)[0]):
+        for i in range(0, len(states)):
 
-            x_temp = Simulator.simulate_double_pendulum(states[i,:], action[i,:], self.lengths, self.masses,
+            x_temp = Simulator.simulate_double_pendulum(states[i, :], action[i, :], self.lengths, self.masses,
                                                         self.inertias, self.g, self.friction, self.dt, self.sim_dt)
+            # always zeros, due to c implementation
             ffwdTorque[i, :] = x_temp[4:]
             nextState[i, :] = x_temp[:4]
+            # can not return ffwdTorque here
         return nextState #. ffwdTorque
 
-
-    def sampleReward(self, numElem):
-        return np.zeros((numElem, 1))
-
-    def sampleAction(self, numElem):
-        action = np.random.uniform(- self.maxTorque, self.maxTorque, [numElem, self.dimAction])
-        return action
+        # Todo Matlab references a c-file for linearized dynamics that does not exist in toolbox? port it when found

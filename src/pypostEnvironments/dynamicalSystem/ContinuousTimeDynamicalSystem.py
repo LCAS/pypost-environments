@@ -39,7 +39,6 @@ class ContinuousTimeDynamicalSystem(DynamicalSystem):
         return self.getExpectedNextStateContTime(self.dt, states, actions, args)
 
 
-    @abc.abstractmethod
     def getLinearizedContinuousTimeDynamics(self, states, actions, *args):
         return
 

@@ -5,6 +5,7 @@ from pypost.sampler.initialSampler.InitialStateSamplerStandard import InitialSta
 from pypost.sampler.isActiveSampler.IsActiveNumSteps import IsActiveNumSteps
 
 from pypostEnvironments.dynamicalSystem.Pendulum import Pendulum
+from test.DummyActionAndReward import DummyActionAndReward
 
 defaultSettings = SettingsManager.getDefaultSettings()
 defaultSettings.setProperty('noiseStd', 1.0)
@@ -25,14 +26,14 @@ stepSampler = sampler.stepSampler
 stepSampler.setIsActiveSampler(IsActiveNumSteps(dataManager, 'steps', 40))
 
 initialStateSampler = InitialStateSamplerStandard(sampler)
-actionCost = 0.001
-stateCost = np.asarray([[10, 0], [0, 0]])
+
+dummyActionAndReward = DummyActionAndReward(dataManager.subDataManager, 1, True)
 
 sampler.setTransitionFunction(pendulum)
 sampler.setInitialStateSampler(initialStateSampler)
-sampler.setActionPolicy(pendulum)
-sampler.setRewardFunction(pendulum)
-sampler.setReturnFunction(pendulum)
+sampler.setActionPolicy(dummyActionAndReward)
+sampler.setRewardFunction(dummyActionAndReward)
+sampler.setReturnFunction(dummyActionAndReward)
 
 sampler.finalizeSampler(True)
 data = dataManager.getDataObject(10)
@@ -40,8 +41,6 @@ sampler.numSamples = 100
 sampler.setParallelSampling(True)
 sampler.createSamples(data)
 print('done - generating')
-#
-#pendulum_img_gen = PendulumRenderer.PendulumImageGenerator(48)
-#pendulum_img_gen.preprocessData(data, flat=True)
+
 
 
