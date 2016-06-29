@@ -37,6 +37,7 @@ setup(
     #packages=find_packages(exclude=['contrib', 'docs', 'tests']),
     packages=['pypostEnvironments',
               'pypostEnvironments.dynamicalSystem',
+              'pypostEnvironments.dynamicalSystem.forwardModels',
               'pypostEnvironments.planarKinematics',
               'pypostEnvironments.preprocessor'],
     # TODO Fix error concerning pyyaml directory and uncomment

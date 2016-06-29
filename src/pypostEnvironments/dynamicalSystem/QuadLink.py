@@ -1,6 +1,6 @@
 from pypostEnvironments.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
 from pypostEnvironments.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
-import pypostEnvironments.dynamicalSystem.ForwardSimWrapper as Simulator
+import pypostEnvironments.dynamicalSystem.forwardModels.ForwardModelWrapper as Simulator
 import numpy as np
 
 class QuadLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
@@ -35,12 +35,20 @@ class QuadLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         ffwdTorque = np.zeros((len(states), 4))
 
         # clipping?
-        for i in range(0, len(states)):
-            x_temp = Simulator.simulate_quad_pendulum(states[i, :], actions[i, :], self.lengths, self.masses, self.inertias,
+        x_temp = Simulator.simulate_quad_link(states, actions, self.lengths, self.masses, self.inertias,
                                                       self.g, self.friction, self.dt, self.sim_dt)
-            ffwdTorque[i, :] = x_temp[8:]
-            nextState[i, :] = x_temp[:8]
+        ffwdTorque = x_temp[:, 8:]
+        nextState = x_temp[:, :8]
 
         return nextState
+
+    def getLinearizedContinuousTimeDynamics(self, state, action, *args):
+        f_acc, f_q_acc, f_u_acc = Simulator.get_linearized_quad_link(state, action, self.lengths, self.masses,
+                                                                     self.inertias, self.g, self.friction)
+        control_noise = np.eye(self.dimAction) * self.noiseStd**2
+#        f = np.zeros((8, 1))
+#        f[2:2:] = f_acc
+#        f_q = np.zeros((8, 8))
+
 
         # Todo: Port Mex Implementation for linearized system and utilize it here

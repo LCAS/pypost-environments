@@ -14,7 +14,6 @@ class PlanarKinematicsImagePreprocessor(Preprocessor, DataManipulator):
         self.nrJoints = nrJoints
 
         self.imgSize = 48
-        self.nrJoints = 1
         self.lineWidth = 5
         self.encoding = 'F' # Floating point gray scale encoding (between 0 and 1). use 'L' for 8 bit int
 

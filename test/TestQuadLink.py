@@ -2,7 +2,7 @@ import numpy as np
 from pypost.sampler.EpisodeWithStepsSampler import EpisodeWithStepsSampler
 from pypost.sampler.initialSampler.InitialStateSamplerStandard import InitialStateSamplerStandard
 from pypost.sampler.isActiveSampler.IsActiveNumSteps import IsActiveNumSteps
-from src.pypostEnvironments.dynamicalSystem.QuadLink import QuadLink
+from pypostEnvironments.dynamicalSystem.QuadLink import QuadLink
 from test.DummyActionAndReward import DummyActionAndReward
 
 sampler = EpisodeWithStepsSampler()
@@ -27,5 +27,8 @@ sampler.finalizeSampler(True)
 data = dataManager.getDataObject(10)
 sampler.numSamples = 100
 sampler.setParallelSampling(True)
+state = np.random.uniform(-1, 1, 8)
+action = np.random.uniform(-1, 1, 4)
+#quad_link.getLinearizedContinuousTimeDynamics(state, action)
 sampler.createSamples(data)
 print('done - generating')

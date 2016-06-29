@@ -1,7 +1,7 @@
 import numpy as np
 from pypostEnvironments.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
 from pypostEnvironments.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
-import pypostEnvironments.dynamicalSystem.ForwardSimWrapper as Simulator
+import pypostEnvironments.dynamicalSystem.forwardModels.ForwardModelWrapper as Simulator
 
 
 class DoubleLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
@@ -14,10 +14,21 @@ class DoubleLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         self.masses = np.asarray([1, 1])
         self.friction = np.asarray([0.025, 0.025])
 
-        self.dataManager.setRange('states',
-                                  np.asarray([-np.pi, -30, -np.pi, -30]),
-                                  np.asarray([ np.pi,  30,  np.pi,  30]))
-        self.dataManager.setRange('actions', np.asarray([-10, -10]), np.asarray([10,  10]))
+        self.maxTorque = 30
+        self.noiseState = 0
+        self.stateMinRange = np.asarray([-np.pi, -30, -np.pi, -30])
+        self.stateMaxRange = np.asarray([ np.pi,  30,  np.pi,  30])
+        self.actionMaxRange = np.asarray([10,  10])
+
+        self.linkProperty('maxTorque')
+        self.linkProperty('noiseState')
+        self.linkProperty('stateMinRange', 'pendulumStateMinRange')
+        self.linkProperty('stateMaxRange', 'pendulumStateMaxRange')
+        self.linkProperty('actionMaxRange', 'pendulumActionMaxRange')
+
+
+        self.dataManager.setRange('states', self.stateMinRange, self.stateMaxRange)
+        self.dataManager.setRange('actions', - self.actionMaxRange, self.actionMaxRange)
 
         self.inertias = self.masses * (self.lengths**2 + 0.0001) / 3.0
         self.g = 9.81
@@ -35,14 +46,12 @@ class DoubleLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         maxRange = self.dataManager.getMaxRange('actions')
         action = np.maximum(minRange, np.minimum(actions, maxRange))
 
-        for i in range(0, len(states)):
-
-            x_temp = Simulator.simulate_double_pendulum(states[i, :], action[i, :], self.lengths, self.masses,
+        x_temp = Simulator.simulate_double_link(states, action, self.lengths, self.masses,
                                                         self.inertias, self.g, self.friction, self.dt, self.sim_dt)
-            # always zeros, due to c implementation
-            ffwdTorque[i, :] = x_temp[4:]
-            nextState[i, :] = x_temp[:4]
-            # can not return ffwdTorque here
+        # always zeros, due to c implementation
+        ffwdTorque = x_temp[:, 4:]
+        nextState = x_temp[:, :4]
+        # can not return ffwdTorque here
         return nextState #. ffwdTorque
 
         # Todo Matlab references a c-file for linearized dynamics that does not exist in toolbox? port it when found

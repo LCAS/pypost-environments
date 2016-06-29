@@ -8,14 +8,12 @@ class Pendulum(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         PlanarForwardKinematics.__init__(self, rootSampler.dataManager, 1)
         ContinuousTimeDynamicalSystem.__init__(self, rootSampler, 1)
 
-        self.periodicRange = [-0.5 * np.pi, 1.5 * np.pi]
         self.maxTorque = 30
         self.noiseState = 0
         self.stateMinRange = np.asarray([-np.pi, -20])
         self.stateMaxRange = np.asarray([ np.pi,  20])
         self.actionMaxRange = np.asarray([500])
 
-        self.linkProperty('periodicRange')
         self.linkProperty('maxTorque')
         self.linkProperty('noiseState')
         self.linkProperty('stateMinRange', 'pendulumStateMinRange')
@@ -33,8 +31,6 @@ class Pendulum(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         self.dataManager.setRange('actions', - self.actionMaxRange, self.actionMaxRange)
 
         self.initObject()
-
-        #Dummy for testing, as long as no further policies and reward functions are implemented
 
     def getExpectedNextStateContTime(self, dt, states, actions, *args):
 
