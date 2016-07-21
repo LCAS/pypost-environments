@@ -27,8 +27,8 @@ setup(  name        = "DoubleLinkForwardModel",
 _QuadLinkForwardModel = Extension("_QuadLinkForwardModel",
                                ["QuadLinkForwardModel.i","QuadLinkForwardModel.c"],
                                include_dirs = [numpy_include],
-                               extra_compile_args=['-fopenmp'],
-                               extra_link_args=['-lgomp']
+                               #extra_compile_args=['-fopenmp'],
+                               #extra_link_args=['-lgomp']
                               )
 
 setup(  name        = "QuadLinkForwardModel",
