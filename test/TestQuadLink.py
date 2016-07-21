@@ -11,7 +11,7 @@ quad_link = QuadLink(sampler)
 
 dataManager = sampler.getEpisodeDataManager()
 stepSampler = sampler.stepSampler
-stepSampler.setIsActiveSampler(IsActiveNumSteps(dataManager, 'steps', 40))
+stepSampler.setIsActiveSampler(IsActiveNumSteps(dataManager, 'steps', 1000))
 
 initialStateSampler = InitialStateSamplerStandard(sampler)
 
@@ -25,7 +25,7 @@ sampler.setReturnFunction(dummyActionAndReward)
 
 sampler.finalizeSampler(True)
 data = dataManager.getDataObject(10)
-sampler.numSamples = 100
+sampler.numSamples = 1000
 sampler.setParallelSampling(True)
 state = np.random.uniform(-1, 1, 8)
 action = np.random.uniform(-1, 1, 4)

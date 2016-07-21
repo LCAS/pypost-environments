@@ -20,6 +20,8 @@ class TransitionFunction(DataManipulator):
         self.stepManager.addDataEntry('nextStates', dimState)
         self.stepManager.addDataEntry('actions', dimAction)
 
+        rootSampler.stepSampler.addElementsForTransition("nextStates", "states")
+
         self.addDataManipulationFunction(self.transitionFunction, ['states', 'actions'], ['nextStates'])
         self.addDataFunctionAlias('sampleNextState', 'transitionFunction')
 

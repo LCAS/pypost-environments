@@ -1,6 +1,6 @@
 #include "math.h"
 #include "stdio.h"
-
+#include "omp.h"
 #define SQ(x) ((x)*(x))
 /*
  * logic deciding which mode to use now in python since swig only supports using arrays whose size is know before
@@ -72,9 +72,25 @@ void simulate(double *xValues, int numSamples, int dim_states,
     double l4cm = l4 / 2.0;
 
     double t1, t2, t3, t4;
-
+   // printf("T: %d \n", omp_get_max_threads());
 
     int sampleIndex, rowOffset, outOffset;
+    #pragma omp parallel for private(a1, a1d, a2 , a2d, a3, a3d, a4, a4d,\
+                                     s1, c1, s2, c2, s3, c3, s4, c4,\
+                                     a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t,\
+                                     determinant,\
+                                     s12, c12, s23, c23, s34, c34, s1234, s123, s234, c234,\
+                                     a1d_a1d, a2d_a2d, a3d_a3d, a4d_a4d,\
+                                     a1d_p_a2d_2, l4cm_m4, l3_m4, l3cm_m3, l2cm_m2, l3cm_m3_l3_m4,\
+                                     l2cm_m2_p_l2_m3_p_m4,\
+                                     l3_l4cm_m4, l2_l4cm_m4, l1_l4cm_m4,\
+                                     l2_l3cm_m3_l3_m4, l1_l3cm_m3_l3_m4, l2_l4cm_m4_c34,\
+                                     expr1, expr2, expr3, expr4, expr5, expr6, expr7, expr8,\
+                                     expr4a, expr4b, expr5a, expr9a, expr9,\
+                                     a123d, l1_l3cm_m3_l3_m4_s23, l2_l4cm_m4_s34,\
+                                     a1dd, a2dd, a3dd, a4dd,\
+                                     t1, t2, t3, t4,\
+                                     rowOffset, outOffset)
     for (sampleIndex=0;sampleIndex<numSamples;sampleIndex++)
     {
         rowOffset=sampleIndex*4;

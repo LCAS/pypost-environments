@@ -34,7 +34,7 @@ sampler = EpisodeWithStepsSampler()
 # ... which we create next!
 # This will load the settings specified above from the setting manager and add all needed entries to the samplers
 # data manager.
-pendulum = DoubleLink(sampler)
+pendulum = QuadLink(sampler)
 initialStateSampler = InitialStateSamplerStandard(sampler)
 
 # Next we can get the Data Manager and its sub manager from the sampler. We will need them later
@@ -42,7 +42,7 @@ episodeManager = sampler.getEpisodeDataManager()
 stepManager = episodeManager.subDataManager
 
 # Dummy Action and Reward functions (return always 0):
-action_and_reward = DummyActionAndReward(stepManager, 2)
+action_and_reward = DummyActionAndReward(stepManager, 4)
 
 # The isActiveSampler specifies how long the step sampler should sample each epoch.
 #  For this tutorial we just use a fixed number.
@@ -59,7 +59,7 @@ sampler.setRewardFunction(action_and_reward)
 sampler.setReturnFunction(action_and_reward)
 
 # We initialize the preprocessor. It will add an entry to hold the (flattened) images to the step manager.
-number_of_joints = 2  # one joint since we use the pendulum
+number_of_joints = 4  # one joint since we use the pendulum
 img_pre = ImgPreprocessor(stepManager, number_of_joints)
 
 # Finally we are going to sample the data. In order to do this we first need to get a data object of the
