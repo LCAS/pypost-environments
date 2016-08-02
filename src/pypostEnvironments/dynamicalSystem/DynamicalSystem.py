@@ -1,5 +1,5 @@
 import numpy as np
-from pypostEnvironments.TransitionFunctionGaussianNoise import TransitionFunctionGaussianNoise
+from pypost.environments.TransitionFunctionGaussianNoise import TransitionFunctionGaussianNoise
 
 
 class DynamicalSystem(TransitionFunctionGaussianNoise):
@@ -52,7 +52,6 @@ class DynamicalSystem(TransitionFunctionGaussianNoise):
 
     def transitionFunction(self, states, actions, *args):
         actionNoise = self.getControlNoise(states, actions, args)
-
         new_states = self.getExpectedNextState(states, actions + actionNoise, args)
         return new_states, actionNoise
 

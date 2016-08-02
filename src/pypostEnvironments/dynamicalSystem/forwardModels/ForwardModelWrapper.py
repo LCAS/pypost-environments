@@ -1,7 +1,6 @@
 import _DoubleLinkForwardModel as DoubleLink
 import _QuadLinkForwardModel as QuadLink
 import numpy as np
-import time
 
 # We create the array to return the values in here in python for two reasons:
 # - We can only return arrays with swig whose size is known before the function call
@@ -31,8 +30,6 @@ def simulate_quad_link(states, actions, lengths, masses, inertias, g, friction, 
         result = np.zeros((num_samples,  4))
     else:
         result = np.zeros((num_samples, 12))
-   # t = time.time()
     QuadLink.simulate(states, actions, dt, masses, lengths, inertias, g, friction, dst, result)
-   # print(time.time() - t)
     return result
 
