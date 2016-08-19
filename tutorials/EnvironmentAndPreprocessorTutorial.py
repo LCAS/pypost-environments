@@ -8,7 +8,7 @@ from pypostEnvironments.preprocessor.PlanarKinematicsImagePreprocessor import Pl
 from pypostEnvironments.dynamicalSystem.Pendulum import Pendulum
 from pypostEnvironments.dynamicalSystem.DoubleLink import DoubleLink
 from pypostEnvironments.dynamicalSystem.QuadLink import QuadLink
-from test.DummyActionAndReward import DummyActionAndReward
+from tests.DummyActionAndReward import DummyActionAndReward
 # Tutorial: How to initialize an environment with a preprocessor:
 
 # First we get the default settings Object from the Settings Manager
@@ -45,7 +45,7 @@ stepManager = episodeManager.subDataManager
 action_and_reward = DummyActionAndReward(stepManager, 4)
 
 # The isActiveSampler specifies how long the step sampler should sample each epoch.
-#  For this tutorial we just use a fixed number.
+#  For this tutorials we just use a fixed number.
 steps_per_epoch = 100
 stepSampler = sampler.stepSampler
 stepSampler.setIsActiveSampler(IsActiveNumSteps(episodeManager, 'steps', steps_per_epoch))

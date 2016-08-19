@@ -1,5 +1,7 @@
 #Install simulators written in C
-sudo python3 src/pypostEnvironments/dynamicalSystem/forwardModels/installForwardModels/py install
+cd src/pypostEnvironments/dynamicalSystem/forwardModels
+python3 installForwardModels.py install $1
 #Install environment
-sudo python3 setup.py install
+cd ../../../..
+python3 setup.py install $1
 
