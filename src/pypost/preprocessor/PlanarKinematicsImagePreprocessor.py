@@ -1,15 +1,15 @@
 import numpy as np
 from PIL import Image
 from PIL import ImageDraw
-from pypostEnvironments.preprocessor.Preprocessor import Preprocessor
-from pypost.data.DataManipulator import DataManipulator
 
-class PlanarKinematicsImagePreprocessor(Preprocessor, DataManipulator):
+from pypost.preprocessor import Preprocessor
+
+
+class PlanarKinematicsImagePreprocessor(Preprocessor):
 
     def __init__(self, dataManager, nrJoints):
 
-        Preprocessor.__init__(self)
-        DataManipulator.__init__(self, dataManager)
+        super().__init__(dataManager)
 
         self.nrJoints = nrJoints
 
@@ -21,12 +21,13 @@ class PlanarKinematicsImagePreprocessor(Preprocessor, DataManipulator):
         self.linkProperty('lineWidth')
 
         self.renderer = Renderer(self.imgSize, self.nrJoints, self.lineWidth, self.encoding)
-        self.dataManager.addDataEntry('f_images', self.imgSize ** 2)
-        self.addDataManipulationFunction(self.renderer.generateFlattenedImagesFromStates,
-                                         ['states'], ['f_images'], name='createImages')
+        self.dataManager.addDataEntry('flatImages', self.imgSize ** 2)
+        #self.addDataManipulationFunction(self.renderer.generateFlattenedImagesFromStates,
+                                         #['states'], ['f_images'], name='createImages')
 
-    def preprocessData(self, data, *args):
-        self.callDataFunction('createImages', data)
+    def preprocessStates(self, states):
+        return self.renderer.generateFlattenedImagesFromStates(states)
+
 
 
 class Renderer:

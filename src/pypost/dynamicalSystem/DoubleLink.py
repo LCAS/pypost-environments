@@ -1,14 +1,15 @@
 import numpy as np
-from pypostEnvironments.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
-from pypostEnvironments.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
-import pypostEnvironments.dynamicalSystem.forwardModels.ForwardModelWrapper as Simulator
+from pypost.dynamicalSystem import ContinuousTimeDynamicalSystem
+
+from pypost.dynamicalSystem import ForwardModel
+from pypost.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
 
 
 class DoubleLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
 
-    def __init__(self, rootSampler):
-        PlanarForwardKinematics.__init__(self, rootSampler.dataManager, 2)
-        ContinuousTimeDynamicalSystem.__init__(self, rootSampler, 2)
+    def __init__(self, dataManager):
+        PlanarForwardKinematics.__init__(self, dataManager, 2)
+        ContinuousTimeDynamicalSystem.__init__(self, dataManager, 2)
 
         self.lengths = np.asarray([1, 1])
         self.masses = np.asarray([1, 1])
@@ -35,9 +36,8 @@ class DoubleLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         self.sim_dt = 1e-4
         self.PDSetPoints = 0
         self.PDGains = 0
-        self.initObject()
 
-    def getExpectedNextStateContTime(self, dt, states, actions, *args):
+    def getExpectedNextStateContTime(self, states, actions, *args):
 
         nextState = np.zeros(np.shape(states))
         ffwdTorque = np.zeros((len(states), 2))
@@ -46,7 +46,7 @@ class DoubleLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         maxRange = self.dataManager.getMaxRange('actions')
         action = np.maximum(minRange, np.minimum(actions, maxRange))
 
-        x_temp = Simulator.simulate_double_link(states, action, self.lengths, self.masses,
+        x_temp = ForwardModel.simulate_double_link(states, action, self.lengths, self.masses,
                                                         self.inertias, self.g, self.friction, self.dt, self.sim_dt)
         # always zeros, due to c implementation
         ffwdTorque = x_temp[:, 4:]

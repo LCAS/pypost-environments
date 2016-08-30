@@ -1,12 +1,14 @@
 import numpy as np
-from pypostEnvironments.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
-from pypostEnvironments.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
+
+from pypost.dynamicalSystem import ContinuousTimeDynamicalSystem
+from pypost.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
+
 
 class Pendulum(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
 
-    def __init__(self, rootSampler):
-        PlanarForwardKinematics.__init__(self, rootSampler.dataManager, 1)
-        ContinuousTimeDynamicalSystem.__init__(self, rootSampler, 1)
+    def __init__(self, dataManager):
+        PlanarForwardKinematics.__init__(self, dataManager, 1)
+        ContinuousTimeDynamicalSystem.__init__(self, dataManager, 1)
 
         self.maxTorque = 30
         self.noiseState = 0
@@ -30,12 +32,12 @@ class Pendulum(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         self.dataManager.setRange('states', self.stateMinRange, self.stateMaxRange)
         self.dataManager.setRange('actions', - self.actionMaxRange, self.actionMaxRange)
 
-        self.initObject()
+       # self.initObject()
 
-    def getExpectedNextStateContTime(self, dt, states, actions, *args):
+    def getExpectedNextStateContTime(self, states, actions, *args):
 
         actions = np.maximum(-self.maxTorque, np.minimum(actions, self.maxTorque))
-        nSteps = dt / self.sim_dt
+        nSteps = self.dt / self.sim_dt
 
         if nSteps != np.round(nSteps):
             print('Warning from Pendulum: dt does not match up')

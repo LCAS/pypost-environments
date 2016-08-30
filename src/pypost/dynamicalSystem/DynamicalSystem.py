@@ -1,11 +1,10 @@
 import numpy as np
-from pypost.environments.TransitionFunctionGaussianNoise import TransitionFunctionGaussianNoise
-
+from pypost.envs.TransitionFunctionGaussianNoise import TransitionFunctionGaussianNoise
 
 class DynamicalSystem(TransitionFunctionGaussianNoise):
 
-    def __init__(self, rootSampler, dimensions):
-        super().__init__(rootSampler, dimensions * 2, dimensions)
+    def __init__(self, dataManager, dimensions):
+        super().__init__(dataManager, dimensions * 2, dimensions)
 
         self.noiseStd = 1
         self.noiseMode = 0
@@ -15,35 +14,28 @@ class DynamicalSystem(TransitionFunctionGaussianNoise):
         self.linkProperty('noiseMode')
         self.linkProperty('returnControlNoise')
 
-        self.addDataManipulationFunction(self.getControlNoiseStd, ['states', 'actions'], ['noise_std'])
-        self.addDataManipulationFunction(self.getControlNoise, ['states', 'actions'], ['actionNoise'])
-
-        self.addDataManipulationFunction(self.getTransitionLogProbabilities,
-                                         ['states', 'actions', 'actionsNoise'],
-                                         ['logProbTrans'])
-        self.addDataManipulationFunction(self.getUncontrolledTransitionLogProbabilities,
-                                         ['states', 'actions', 'actionsNoise'],
-                                         ['logProbTrans'])
-
-
-
-
+    @TransitionFunctionGaussianNoise.DataMethod(inputArguments=['states', 'actions'], outputArguments=['noiseNoise'])
     def getControlNoise(self, states, actions, *args):
         std = self.getControlNoiseStd(states, actions)
         return np.random.normal(loc=0.0, scale=std, size=np.shape(actions))
 
+    @TransitionFunctionGaussianNoise.DataMethod(inputArguments=['states', 'actions'], outputArguments=['action_std'])
     def getControlNoiseStd(self, states, actions, *args):
         if self.noiseMode == 0:
             return self.noiseStd * np.ones(np.shape(actions))
         elif self.noiseMode == 1:
             return self.noiseStd * np.abs(actions)
 
+    @TransitionFunctionGaussianNoise.DataMethod(inputArguments=['states', 'actions', 'actionNoise'],
+                                                outputArguments=['logPropTrans'])
     def getTransitionLogProbabilities(self, states, actions, noise):
         std = self.getControlNoiseStd(states, actions)
         std[std < 1e-8] = 1e-8
         noiseNorm = noise / std # check here
         return -0.5 * np.sum(noiseNorm**2, 1)
 
+    @TransitionFunctionGaussianNoise.DataMethod(inputArguments=['states', 'actions', 'actionNoise'],
+                                                outputArguments=['logPropTrans'])
     def getUncontrolledTransitionLogProbabilities(self, states, actions, noise):
         std = self.getControlNoiseStd(states, actions)
         std[std < 1e-8] = 1e-8
@@ -57,16 +49,16 @@ class DynamicalSystem(TransitionFunctionGaussianNoise):
 
     # Todo Test this
     def getLinearizedDynamics(self, states, actions, *args):
-        f_states = np.zeros(self.dimState, self.dimState)
-        f_actions = np.zeros(self.dimState, self.dimAction)
-        u_dummy = np.zeros(1, self.dimAction) #?
+        f_states = np.zeros((self.stateDim, self.stateDim))
+        f_actions = np.zeros((self.stateDim, self.actionDim))
+        u_dummy = np.zeros((1, self.actionDim)) #?
 
         f = self.getExpectedNextState(states, actions, args)
         assert not np.isnan(f).any() #does this work?
 
         stepSize = 1e-5
         # finite differences...
-        for i in range(0, self.dimState):
+        for i in range(0, self.stateDim):
             states_temp = states
             states_temp[i] = states[i] + stepSize
             f1 = self.getExpectedNextState(states_temp, actions, args)
@@ -74,7 +66,7 @@ class DynamicalSystem(TransitionFunctionGaussianNoise):
             f2 = self.getExpectedNextState(states_temp, actions, args)
             f_states[:, i] = (f1 - f2) / (2 * stepSize)
 
-        for i in range(0, self.dimAction):
+        for i in range(0, self.actionDim):
             actions_temp = u_dummy
             actions_temp[i] = u_dummy[i] + stepSize
             f1 = self.getExpectedNextState(states, actions_temp, args)

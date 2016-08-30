@@ -1,13 +1,15 @@
-from pypostEnvironments.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
-from pypostEnvironments.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
-import pypostEnvironments.dynamicalSystem.forwardModels.ForwardModelWrapper as Simulator
 import numpy as np
+from pypost.dynamicalSystem import ContinuousTimeDynamicalSystem
+
+from pypost.dynamicalSystem import ForwardModel
+from pypost.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
+
 
 class QuadLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
 
-    def __init__(self, root_sampler):
-        PlanarForwardKinematics.__init__(self, root_sampler.dataManager, 4)
-        ContinuousTimeDynamicalSystem.__init__(self, root_sampler, 4)
+    def __init__(self, dataManager):
+        PlanarForwardKinematics.__init__(self, dataManager, 4)
+        ContinuousTimeDynamicalSystem.__init__(self, dataManager, 4)
 
         # Todo use settings
 
@@ -32,28 +34,19 @@ class QuadLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         self.linkProperty('minRangeAction', 'QuadLinkMinRangeAction')
         self.linkProperty('maxRangeAction', 'QuadLinkMaxRangeAction')
 
-
+        #todo check if works, pull up? sub data manager?
         self.dataManager.setRange('states', self.minRangeState, self.maxRangeState)
         self.dataManager.setRange('actions', self.minRangeAction, self.maxRangeAction)
 
-        self.initObject()
+        #self.initObject()
 
-    def getExpectedNextStateContTime(self, dt, states, actions, *args):
+    def getExpectedNextStateContTime(self, states, actions, *args):
 
-        x_temp = Simulator.simulate_quad_link(states, actions, self.lengths, self.masses, self.inertias,
+        x_temp = ForwardModel.simulate_quad_link(states, actions, self.lengths, self.masses, self.inertias,
                                                       self.g, self.friction, self.dt, self.sim_dt)
         ffwdTorque = x_temp[:, 8:]
         nextState = x_temp[:, :8]
 
         return nextState
 
-    def getLinearizedContinuousTimeDynamics(self, state, action, *args):
-        f_acc, f_q_acc, f_u_acc = Simulator.get_linearized_quad_link(state, action, self.lengths, self.masses,
-                                                                     self.inertias, self.g, self.friction)
-        control_noise = np.eye(self.dimAction) * self.noiseStd**2
-#        f = np.zeros((8, 1))
-#        f[2:2:] = f_acc
-#        f_q = np.zeros((8, 8))
-
-
-        # Todo: Port Mex Implementation for linearized system and utilize it here
+    # Todo: Port Mex Implementation for linearized system and utilize it here

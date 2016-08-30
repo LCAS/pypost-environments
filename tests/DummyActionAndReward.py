@@ -13,14 +13,11 @@ class DummyActionAndReward(DataManipulator):
 
         dataManager.addDataEntry('rewards', 1)
 
-        self.addDataManipulationFunction(self.sampleAction, [], ['actions'])
-        self.addDataManipulationFunction(self.sampleReward, [], ['rewards'])
-        self.addDataFunctionAlias('sampleReturn', 'sampleReward')
-
-
+    @DataManipulator.DataMethod(inputArguments=[], outputArguments=['rewards'], takesNumElements=True)
     def sampleReward(self, numElem):
         return np.zeros((numElem, 1))
 
+    @DataManipulator.DataMethod(inputArguments=[], outputArguments=['actions'], takesNumElements=True)
     def sampleAction(self, numElem):
         if self.generateActions:
             return np.random.uniform(-self.maxTorque, self.maxTorque, [numElem, self.dimAction])

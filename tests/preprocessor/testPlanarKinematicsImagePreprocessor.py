@@ -1,6 +1,9 @@
-import numpy as np
 import unittest
-from pypostEnvironments.preprocessor.PlanarKinematicsImagePreprocessor import Renderer
+
+import numpy as np
+
+from pypost.preprocessor.PlanarKinematicsImagePreprocessor import Renderer
+
 
 class TestRenderer(unittest.TestCase):
 

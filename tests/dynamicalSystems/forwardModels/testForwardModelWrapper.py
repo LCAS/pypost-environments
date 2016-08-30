@@ -1,6 +1,8 @@
 import unittest
+
 import numpy as np
-from pypostEnvironments.dynamicalSystem.forwardModels import ForwardModelWrapper
+
+from pypost.dynamicalSystem.forwardModels import ForwardModel
 
 
 # IMPORTANT:
@@ -18,16 +20,16 @@ class Test(unittest.TestCase):
         states = np.zeros((10, 4))
         actions = np.ones((10, 2))
 
-        next_states = ForwardModelWrapper.simulate_double_link(states, actions,
+        next_states = ForwardModel.simulate_double_link(states, actions,
                                                              self.lengths[:2], self.masses[:2],
                                                              self.inertias[:2], self.g, self.friction[:2],
-                                                             dt=1e-2, dst=1e-4)
+                                                        dt=1e-2, dst=1e-4)
         self.assertEqual(next_states.shape, (10, 6))
 
-        next_states = ForwardModelWrapper.simulate_double_link(states, actions,
-                                                             self.lengths, self.masses,
-                                                             self.inertias, self.g, self.friction,
-                                                             dt=1, dst=1e-4)
+        next_states = ForwardModel.simulate_double_link(states, actions,
+                                                        self.lengths, self.masses,
+                                                        self.inertias, self.g, self.friction,
+                                                        dt=1, dst=1e-4)
         self.assertEqual(next_states.shape, (10, 2))
 
 
@@ -36,14 +38,14 @@ class Test(unittest.TestCase):
         states = np.zeros((10, 8))
         actions = np.ones((10, 4))
 
-        next_states = ForwardModelWrapper.simulate_quad_link(states, actions,
-                                                             self.lengths, self.masses,
-                                                             self.inertias, self.g, self.friction,
-                                                             dt=1e-2, dst=1e-4)
+        next_states = ForwardModel.simulate_quad_link(states, actions,
+                                                      self.lengths, self.masses,
+                                                      self.inertias, self.g, self.friction,
+                                                      dt=1e-2, dst=1e-4)
         self.assertEqual(next_states.shape, (10, 12))
 
-        next_states = ForwardModelWrapper.simulate_quad_link(states, actions,
-                                                             self.lengths, self.masses,
-                                                             self.inertias, self.g, self.friction,
-                                                             dt=1, dst=1e-4)
+        next_states = ForwardModel.simulate_quad_link(states, actions,
+                                                      self.lengths, self.masses,
+                                                      self.inertias, self.g, self.friction,
+                                                      dt=1, dst=1e-4)
         self.assertEqual(next_states.shape, (10, 4))
