@@ -1,5 +1,5 @@
 import abc
-from pypost.data.DataManipulator import DataManipulator
+from pypost.data import DataManipulator
 class Preprocessor(DataManipulator):
 
     @abc.abstractmethod

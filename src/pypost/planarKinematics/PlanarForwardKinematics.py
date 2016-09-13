@@ -1,4 +1,4 @@
-from pypost.data.DataManipulator import DataManipulator
+from pypost.data import DataManipulator
 import numpy as np
 
 class PlanarForwardKinematics(DataManipulator):

@@ -1,10 +1,9 @@
 import unittest
 
 import numpy as np
-import pypost.common.SettingsManager as SettingsManager
-from pypost.sampler.EpisodeWithStepsSampler import EpisodeWithStepsSampler
-from pypost.sampler.initialSampler.InitialStateSamplerStandard import InitialStateSamplerStandard
-from pypost.sampler.isActiveSampler.IsActiveNumSteps import IsActiveNumSteps
+from pypost.common import SettingsManager
+from pypost.sampler import EpisodeWithStepsSampler, StepBasedEpisodeTerminationSampler
+from pypost.initialSampler import InitialStateSamplerStandard
 
 from pypost.dynamicalSystem.Pendulum import Pendulum
 from tests.DummyActionAndReward import DummyActionAndReward
@@ -25,9 +24,11 @@ class Test(unittest.TestCase):
 
         self.sampler = EpisodeWithStepsSampler()
         self.episodeManager = self.sampler.getEpisodeDataManager()
+        self.stepManager = self.episodeManager.subDataManager
         self.pendulum = Pendulum(self.episodeManager)
 
-        self.sampler.stepSampler.setIsActiveSampler(IsActiveNumSteps(self.episodeManager, 'bla', numTimeSteps=40))
+        self.sampler.stepSampler.setIsActiveSampler(StepBasedEpisodeTerminationSampler(
+            self.episodeManager, 'bla', numTimeSteps=40))
 
         initialStateSampler = InitialStateSamplerStandard(self.episodeManager)
 
@@ -44,7 +45,7 @@ class Test(unittest.TestCase):
         data = self.episodeManager.getDataObject(10)
         self.sampler.numSamples = 100
         self.sampler.setParallelSampling(True)
-        self.sampler.createSamples(data)
+        data >> self.sampler
         self.assertEqual(data[:, 1].states.shape, (100, 2))
         self.assertEqual(data[1, :].states.shape, (40, 2))
 

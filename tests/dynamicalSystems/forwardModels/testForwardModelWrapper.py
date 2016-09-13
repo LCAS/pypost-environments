@@ -2,7 +2,7 @@ import unittest
 
 import numpy as np
 
-from pypost.dynamicalSystem.forwardModels import ForwardModel
+from pypost.dynamicalSystem import ForwardModel
 
 
 # IMPORTANT:

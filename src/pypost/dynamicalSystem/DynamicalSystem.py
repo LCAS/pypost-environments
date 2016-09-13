@@ -1,5 +1,5 @@
 import numpy as np
-from pypost.envs.TransitionFunctionGaussianNoise import TransitionFunctionGaussianNoise
+from pypost.envs import TransitionFunctionGaussianNoise
 
 class DynamicalSystem(TransitionFunctionGaussianNoise):
 

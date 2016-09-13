@@ -1,7 +1,7 @@
 import numpy as np
-from pypost.dynamicalSystem import ContinuousTimeDynamicalSystem
+from pypost.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
 
-from pypost.dynamicalSystem import ForwardModel
+from pypost.dynamicalSystem.forwardModels import ForwardModel
 from pypost.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
 
 

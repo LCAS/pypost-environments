@@ -1,8 +1,7 @@
 import unittest
 
-from pypost.sampler.EpisodeWithStepsSampler import EpisodeWithStepsSampler
-from pypost.sampler.initialSampler.InitialStateSamplerStandard import InitialStateSamplerStandard
-from pypost.sampler.isActiveSampler.IsActiveNumSteps import IsActiveNumSteps
+from pypost.sampler import EpisodeWithStepsSampler, StepBasedEpisodeTerminationSampler
+from pypost.initialSampler import InitialStateSamplerStandard
 
 from pypost.dynamicalSystem.DoubleLink import DoubleLink
 from tests.DummyActionAndReward import DummyActionAndReward
@@ -14,7 +13,8 @@ class Test(unittest.TestCase):
         self.sampler = EpisodeWithStepsSampler()
         self.episodeManager = self.sampler.getEpisodeDataManager()
         double_link = DoubleLink(self.episodeManager)
-        self.sampler.stepSampler.setIsActiveSampler(IsActiveNumSteps(self.episodeManager, 'steps', 40))
+        self.sampler.stepSampler.setIsActiveSampler(StepBasedEpisodeTerminationSampler(
+            self.episodeManager, 'steps', 40))
 
         initialStateSampler = InitialStateSamplerStandard(self.episodeManager)
         dummyActionAndReward = DummyActionAndReward(self.episodeManager.subDataManager, 2, True)
@@ -29,7 +29,7 @@ class Test(unittest.TestCase):
         data = self.episodeManager.getDataObject(10)
         self.sampler.numSamples = 100
         self.sampler.setParallelSampling(True)
-        self.sampler.createSamples(data)
+        data[...] >> self.sampler
         self.assertEqual(data[:, 1].states.shape, (100, 4))
         self.assertEqual(data[1, :].states.shape, (40, 4))
 
