@@ -24,13 +24,13 @@ except AttributeError:
 fmPath = "src/pypost/dynamicalSystem/forwardModels/"
 
 # Install Dual Link Forward Model
-_DoubleLinkForwardModel = Extension(fmPath + "_DoubleLinkForwardModel",
+_DoubleLinkForwardModel = Extension("_DoubleLinkForwardModel",
                                     [fmPath + "DoubleLinkForwardModel.i",
                                      fmPath + "DoubleLinkForwardModel.c"],
                                     include_dirs=[numpy_include])
 
 # Install Quad Link Forward Model
-_QuadLinkForwardModel = Extension(fmPath + "_QuadLinkForwardModel",
+_QuadLinkForwardModel = Extension("_QuadLinkForwardModel",
                                   [fmPath + "QuadLinkForwardModel.i",
                                    fmPath + "QuadLinkForwardModel.c"],
                                   include_dirs=[numpy_include],
