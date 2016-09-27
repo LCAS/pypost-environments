@@ -12,53 +12,55 @@ from tests.DummyActionAndReward import DummyActionAndReward
 
 # First we get the default settings Object from the Settings Manager
 defaultSettings = SettingsManager.getDefaultSettings()
+
 # Afterwards we can set those settings. First for the pendulum itself...
 defaultSettings.setProperty('noiseStd', 1e-10)
 defaultSettings.setProperty('dt', 0.025)
 defaultSettings.setProperty('initSigmaActions', 1e-10)
+
 # ... to sample the initial states ...
 defaultSettings.setProperty('initialStateDistributionType', 'Uniform')
 defaultSettings.setProperty('numTimeSteps', 100)
-#defaultSettings.setProperty('initialStateDistributionMinRange', np.tile(np.asarray([np.pi - np.pi, -2]), [2]))
-#defaultSettings.setProperty('initialStateDistributionMaxRange', np.tile(np.asarray([np.pi + np.pi,  2]), [2]))
+
 # ... and for the image creating preprocessor. Note that the same settings object is used here which is then
 # distributed by the setting manager to all its clients. (The Pendulum, the InitalStateSampler as well as the
 # Preprocessor going to be setting clients
-
 img_size = 48 # pixels, height and width. (currently only squared images possible)
 defaultSettings.setProperty('imgSize', img_size)
 defaultSettings.setProperty('lineWidth', 3)  # again pixel
 
-# Next we can create a "Sampler". It will later sample the values from the desired environment...
+# Next we can create a "Sampler". It will later sample the values from the desired environment
 sampler = EpisodeWithStepsSampler()
-# ... which we create next!
-# This will load the settings specified above from the setting manager and add all needed entries to the samplers
-# data manager.
+
+# We also need the data managers for the episode and step layer - we get them from the sampler
 episodeManager = sampler.getEpisodeDataManager()
 stepManager = episodeManager.subDataManager
-pendulum = DoubleLink(episodeManager)
+
+# Finally, we can create our environment. Try exchanging the DoubleLink with the QuadLink or the Pendulum...
+n_link_pendulum = DoubleLink(episodeManager)
+# ... make sure you change the number of joints too
 number_of_joints = 2
+
+# We can still add further settings, e.g. for the initialStateSampler created next
 defaultSettings.setProperty('initialStateDistributionMinRange', np.tile(np.asarray([np.pi - np.pi, -2]), [number_of_joints]))
 defaultSettings.setProperty('initialStateDistributionMaxRange', np.tile(np.asarray([np.pi + np.pi,  2]), [number_of_joints]))
 initialStateSampler = InitialStateSamplerStandard(stepManager)
 
-# Next we can get the Data Manager and its sub manager from the sampler. We will need them later
-
-# Dummy Action and Reward functions (return always 0):
-action_and_reward = DummyActionAndReward(stepManager, number_of_joints, True)
+# Dummy Action and Reward Functions: Reward is always zero. Actions are sampled random if generateActions=True, else
+# all actions are 0
+action_and_reward = DummyActionAndReward(stepManager, number_of_joints, generateActions=True)
 
 # The isActiveSampler specifies how long the step sampler should sample each epoch.
 #  For this tutorials we just use a fixed number.
 steps_per_epoch = 100
 stepSampler = sampler.stepSampler
-#Todo .. get rid of stepName entirely?
-stepSampler.setIsActiveSampler(StepBasedEpisodeTerminationSampler(stepManager, 'bla', steps_per_epoch))
+stepSampler.setIsActiveSampler(StepBasedEpisodeTerminationSampler(stepManager, 'steps', steps_per_epoch))
 
 # Afterwards we tell the sampler where to find the functions it should sample from
-sampler.setTransitionFunction(pendulum.getExpectedNextStateContTime)
+sampler.setTransitionFunction(n_link_pendulum.getExpectedNextStateContTime)
 sampler.setInitStateSampler(initialStateSampler.sampleInitState)
-# The next three are currently just dummies (all returning just zeros) and can be replaced with your own functions
 sampler.setActionPolicy(action_and_reward.sampleAction)
+# The next two are currently just dummies (all returning just zeros) and can be replaced with your own functions
 sampler.setRewardFunction(action_and_reward.sampleReward)
 sampler.setReturnFunction(action_and_reward.sampleReward)
 
@@ -75,21 +77,19 @@ nr_of_epochs = 100
 sampler.numSamples = nr_of_epochs
 # ... and tell the sampler that there are no dependencies between the episodes and sampling can be performed parallel
 # (Note that the Steps of course depend on each other and hence can not be sampled parallel)
-#Todo enable non parallel sampling
 sampler.setParallelSampling(True)
 
 # We first sample the data ...
 data[...] >> sampler
-# ... and then preprocess them
+# ... and then preprocess it
 data[...] >> img_pre.preprocessStates
 
 print('done - generating')
 
 # We get the first three sampled episodes and plot the first 20 images from each
-states = data[:,0].states
-f_images_0 = data[50, :].flatImages
-f_images_1 = data[51, :].flatImages
-f_images_2 = data[52, :].flatImages
+f_images_0 = data[0, :].flatImages
+f_images_1 = data[1, :].flatImages
+f_images_2 = data[2, :].flatImages
 
 n = 20
 plt.figure(figsize=(20, 4))
