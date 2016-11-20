@@ -1,14 +1,14 @@
 import numpy as np
-from pypost.dynamicalSystem.ContinuousTimeDynamicalSystem import ContinuousTimeDynamicalSystem
+from pypost.dynamicalSystem.DynamicalSystem import DynamicalSystem
 from pypost.dynamicalSystem.forwardModels import ForwardModel
 from pypost.planarKinematics.PlanarForwardKinematics import PlanarForwardKinematics
 
 
-class QuadLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
+class QuadLink(DynamicalSystem, PlanarForwardKinematics):
 
     def __init__(self, dataManager):
         PlanarForwardKinematics.__init__(self, dataManager, 4)
-        ContinuousTimeDynamicalSystem.__init__(self, dataManager, 4)
+        DynamicalSystem.__init__(self, dataManager, 4)
 
         # Todo use settings
 
@@ -37,9 +37,9 @@ class QuadLink(ContinuousTimeDynamicalSystem, PlanarForwardKinematics):
         self.dataManager.setRange('states', self.minRangeState, self.maxRangeState)
         self.dataManager.setRange('actions', self.minRangeAction, self.maxRangeAction)
 
-        #self.initObject()
 
-    def getExpectedNextStateContTime(self, states, actions, *args):
+    def transitionFunction(self, states, actions):
+        actions = np.maximum(self.minRangeAction, np.minimum(actions, self.maxRangeAction))
 
         x_temp = ForwardModel.simulate_quad_link(states, actions, self.lengths, self.masses, self.inertias,
                                                       self.g, self.friction, self.dt, self.sim_dt)

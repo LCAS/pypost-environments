@@ -15,7 +15,7 @@ class DummyActionAndReward(DataManipulator):
 
     @DataManipulator.DataMethod(inputArguments=[], outputArguments=['rewards'], takesNumElements=True)
     def sampleReward(self, numElem):
-        return np.zeros((numElem, 1))
+        return np.ones((numElem, 1))
 
     @DataManipulator.DataMethod(inputArguments=[], outputArguments=['actions'], takesNumElements=True)
     def sampleAction(self, numElem):
