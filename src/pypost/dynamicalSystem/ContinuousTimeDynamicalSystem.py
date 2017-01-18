@@ -19,13 +19,6 @@ class ContinuousTimeDynamicalSystem(DynamicalSystem):
         return controlNoiseStd / np.sqrt(dt)
 
     def transitionFunction(self, states, actions, *args):
-        nextStates, actionNoise = self.transitionFunctionContTime(states, actions, *args)
-        if self.returnControlNoise:
-            return nextStates, actionNoise
-        else:
-            return nextStates
-
-    def transitionFunctionContTime(self, states, actions, *args):
         actions = np.maximum(self.minRangeAction, np.minimum(actions, self.maxRangeAction))
         actionNoise = self.getControlNoise(states, actions, self.dt)
         return self.getExpectedNextStateContTime(states, actions + actionNoise, args), actionNoise

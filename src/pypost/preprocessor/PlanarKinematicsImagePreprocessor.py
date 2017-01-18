@@ -21,7 +21,7 @@ class PlanarKinematicsImagePreprocessor(Preprocessor):
         self.linkProperty('lineWidth')
 
         self.renderer = Renderer(self.imgSize, self.nrJoints, self.lineWidth, self.encoding)
-        self.dataManager.addDataEntry('flatImages', self.imgSize ** 2)
+        self.dataManager.addDataEntry('flatImages', self.imgSize ** 2, level = self.dataManager.getDataEntryLevel('states'))
         #self.addDataManipulationFunction(self.renderer.generateFlattenedImagesFromStates,
                                          #['states'], ['f_images'], name='createImages')
 
