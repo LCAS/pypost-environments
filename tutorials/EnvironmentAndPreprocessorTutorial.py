@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pypost.common.SettingsManager as SettingsManager
-from pypost.dynamicalSystem import DoubleLink
+from pypost.dynamicalSystem import Pendulum
 from pypost.envs.ReturnSummedReward import ReturnSummedReward
 from pypost.sampler import EpisodeWithStepsSampler
 from pypost.initialSampler import InitialStateSamplerStandard
@@ -39,9 +39,9 @@ sampler = EpisodeWithStepsSampler()
 episodeManager = sampler.getEpisodeDataManager()
 
 # Finally, we can create our environment. Try exchanging the DoubleLink with the QuadLink or the Pendulum...
-n_link_pendulum = DoubleLink(episodeManager)
+n_link_pendulum = Pendulum(episodeManager)
 # ... make sure you change the number of joints too
-number_of_joints = 2
+number_of_joints = 1
 
 # We can still add further settings, e.g. for the initialStateSampler created next
 defaultSettings.setProperty('initialStateDistributionMinRange', np.tile(np.asarray([np.pi - np.pi, -2]), [number_of_joints]))
