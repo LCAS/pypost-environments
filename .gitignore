@@ -70,8 +70,8 @@ target/
 # Ignore IntelliJ project folder
 .idea
 
-src/pypost/envs/dynamicalSystem/forwardModels/QuadLinkForwardModel.py
-src/pypost/envs/dynamicalSystem/forwardModels/QuadLinkForwardModel_wrap.c
-src/pypost/envs/dynamicalSystem/forwardModels/DoubleLinkForwardModel.py
-src/pypost/envs/dynamicalSystem/forwardModels/DoubleLinkForwardModel_wrap.c
+src/pypost/dynamicalSystem/forwardModels/QuadLinkForwardModel.py
+src/pypost/dynamicalSystem/forwardModels/QuadLinkForwardModel_wrap.c
+src/pypost/dynamicalSystem/forwardModels/DoubleLinkForwardModel.py
+src/pypost/dynamicalSystem/forwardModels/DoubleLinkForwardModel_wrap.c
 

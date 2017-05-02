@@ -10,10 +10,10 @@ class Pendulum(DynamicalSystem, PlanarForwardKinematics):
         PlanarForwardKinematics.__init__(self, dataManager, 1)
         DynamicalSystem.__init__(self, dataManager, 1)
 
-        self.maxTorque = 30
+        self.maxTorque = np.array([30])
         self.noiseState = 0
-        self.stateMinRange = np.asarray([-np.pi, -20])
-        self.stateMaxRange = np.asarray([ np.pi,  20])
+        self.stateMinRange = np.array([-np.pi, -20])
+        self.stateMaxRange = np.array([ np.pi,  20])
 
         self.linkProperty('stateMinRange', 'stateMinRange')
         self.linkProperty('stateMaxRange', 'stateMaxRange')
